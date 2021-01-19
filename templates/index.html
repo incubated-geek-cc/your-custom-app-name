@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+    <style>
+    html,body {
+      margin:0;
+      padding:0;
+      font-family:Arial;
+      font-size:10px;
+    }
+    body {
+      padding: 20px 45px;
+    }
+    </style>
+  </head>
+  <body>
+      <form id="predict" method="POST">
+        <p>Q1. Assuming the individual has a mental health disorder, how often does he/she feel that it interferes with his/her work when not being treated effectively? (i.e. experience symptoms)</p>
+        <label><input type="radio" name="work_interfere_non_effective_treatment" value="0" checked>Not applicable to him/her</label>
+        <label><input type="radio" name="work_interfere_non_effective_treatment" value="1">Never</label>
+        <label><input type="radio" name="work_interfere_non_effective_treatment" value="2">Rarely</label>
+        <label><input type="radio" name="work_interfere_non_effective_treatment" value="3">Sometimes</label>
+        <label><input type="radio" name="work_interfere_non_effective_treatment" value="4">Often</label>
+        <hr>
+        <p>Q2. Has the individual ever been diagnosed with a mental health disorder?</p>
+        <label><input type="radio" name="diagnosed_disorder" value="1" checked>Yes</label>
+        <label><input type="radio" name="diagnosed_disorder" value="0">No</label>
+        <hr>
+        <p>Q3. Assuming the individual has a mental health disorder, how often does he/she feel that it interferes with his/her work when being treated effectively?</p>
+        <label><input type="radio" name="work_interfere_effective_treatment" value="0" checked>Not applicable to him/her</label>
+        <label><input type="radio" name="work_interfere_effective_treatment" value="1">Never</label>
+        <label><input type="radio" name="work_interfere_effective_treatment" value="2">Rarely</label>
+        <label><input type="radio" name="work_interfere_effective_treatment" value="3">Sometimes</label>
+        <label><input type="radio" name="work_interfere_effective_treatment" value="4">Often</label>
+        <hr>
+        <p>Q4. Does the individual currently have a mental health disorder?</p>
+        <label><input type="radio" name="current_disorder" value="2" checked>Yes</label>
+        <label><input type="radio" name="current_disorder" value="0">Maybe</label>
+        <label><input type="radio" name="current_disorder" value="1">No</label>
+        <hr>
+        <p>Q5. Does the individual have a family history of mental illness?</p>
+        <label><input type="radio" name="family_history" value="2" checked>Yes</label>
+        <label><input type="radio" name="family_history" value="0">No</label>
+        <label><input type="radio" name="family_history" value="1">Unsure</label>
+        <hr>
+        <p>Q6. Did the individual have a mental health disorder in the past?</p>
+        <label><input type="radio" name="past_disorder" value="2" checked>Yes</label>
+        <label><input type="radio" name="past_disorder" value="0">Maybe</label>
+        <label><input type="radio" name="past_disorder" value="1">No</label>
+        <hr>
+        <p>Q7. Does the individual know of the options for mental health care available under his/her employer health coverage?</p>
+        <label><input type="radio" name="care_options" value="1" checked>Yes</label>
+        <label><input type="radio" name="care_options" value="0">No</label>
+        <hr>
+        <p>Q8. How willing would the individual be to share with his/her friends & family that he/she has a mental illness?</p>
+        <label><input type="radio" name="friends_family" value="0" checked>0</label>
+        <label><input type="radio" name="friends_family" value="1">1</label>
+        <label><input type="radio" name="friends_family" value="2">2</label>
+        <label><input type="radio" name="friends_family" value="3">3</label>
+        <label><input type="radio" name="friends_family" value="4">4</label>
+        <label><input type="radio" name="friends_family" value="5">5</label>
+        <label><input type="radio" name="friends_family" value="6">6</label>
+        <label><input type="radio" name="friends_family" value="7">7</label>
+        <label><input type="radio" name="friends_family" value="8">8</label>
+        <label><input type="radio" name="friends_family" value="9">9</label>
+        <label><input type="radio" name="friends_family" value="10">10</label>
+        <br><br>
+        <input type="submit" value="Predict!">
+    </form>
+    <hr>
+    <div id="predictionOutcome"></div>
+    <script>
+      $("form#predict").submit(function(event) {
+          event.preventDefault();
+          var allElements=event.target.elements;
+          var json={
+            "work_interfere_non_effective_treatment":allElements.work_interfere_non_effective_treatment.value,
+            "diagnosed_disorder":allElements.diagnosed_disorder.value,
+            "work_interfere_effective_treatment":allElements.work_interfere_effective_treatment.value,
+            "current_disorder":allElements.current_disorder.value,
+            "family_history":allElements.family_history.value,
+            "past_disorder":allElements.past_disorder.value,
+            "care_options":allElements.care_options.value,
+            "friends_family":allElements.friends_family.value
+          }
+          var jsonStr=JSON.stringify(json)
+          console.log(jsonStr)
+          $.ajax({
+            url: "/api/predict",
+            data: JSON.parse(jsonStr),
+            method: "GET",
+            success: function(result) {
+                let predictedResult=result;
+                let htmlStr="";
+                if(predictedResult=="Yes") {
+                  htmlStr+="<b>Yes, </b> he/she is likely to seek mental healthcare treatment.";
+                } else if(predictedResult=="No") {
+                  htmlStr+="<b>No, </b> he/she is unlikely to seek mental healthcare treatment.";
+                }
+                $("#predictionOutcome").html(htmlStr);
+            },
+            error: function(err) {
+              console.log(err);
+            }
+          });
+          return false
+      });
+    </script>
+  </body>
+</html>
