@@ -4,15 +4,39 @@
     <meta charset="utf-8" />
     <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
     <style>
-    html,body {
-      margin:0;
-      padding:0;
-      font-family:Arial;
-      font-size:10px;
-    }
-    body {
-      padding: 20px 45px;
-    }
+      html, body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial;
+        font-size: 12px;
+      }
+      html {
+        height:100vh;
+        width:100vw;
+        overflow:hidden;
+      }
+      body {
+        height: calc(100vh - 30px);
+        width: calc(100vw - 50px);
+        padding: 5px 25px;
+      }
+      .Yes, .No {
+        margin: 10px;
+        padding: 5px;
+      }
+      .Yes {
+        color: #3c763d;
+        background-color: #dff0d8;
+        border-color: #d6e9c6;
+      }
+      .No {
+        color: #a94442;
+        background-color: #f2dede;
+        border-color: #ebccd1;
+      }
+      #predict {
+        margin: 10px;
+      }
     </style>
   </head>
   <body>
@@ -66,10 +90,10 @@
         <label><input type="radio" name="friends_family" value="8">8</label>
         <label><input type="radio" name="friends_family" value="9">9</label>
         <label><input type="radio" name="friends_family" value="10">10</label>
-        <br><br>
+        <hr>
         <input type="submit" value="Predict!">
     </form>
-    <hr>
+
     <div id="predictionOutcome"></div>
     <script>
       $("form#predict").submit(function(event) {
@@ -86,7 +110,6 @@
             "friends_family":allElements.friends_family.value
           }
           var jsonStr=JSON.stringify(json)
-          console.log(jsonStr)
           $.ajax({
             url: "/api/predict",
             data: JSON.parse(jsonStr),
@@ -95,9 +118,9 @@
                 let predictedResult=result;
                 let htmlStr="";
                 if(predictedResult=="Yes") {
-                  htmlStr+="<b>Yes, </b> he/she is likely to seek mental healthcare treatment.";
+                  htmlStr+="<div class='Yes'><b>Yes, </b> he/she is likely to seek mental healthcare treatment.</div>";
                 } else if(predictedResult=="No") {
-                  htmlStr+="<b>No, </b> he/she is unlikely to seek mental healthcare treatment.";
+                  htmlStr+="<div class='No'><b>No, </b> he/she is unlikely to seek mental healthcare treatment.</div>";
                 }
                 $("#predictionOutcome").html(htmlStr);
             },
